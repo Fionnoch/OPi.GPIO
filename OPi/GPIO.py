@@ -348,6 +348,13 @@ The PWM pins dont follow the GPIO numbering system so the number are quite low.
 This lists all the files associated with pwmchip0. if you successfully created an object in step 3 you will see a pwm object (for example pwm0).
 The number listed after pwm is the pin number used in PWM_pin.
 
+Non Root Access for PWM
+Add the following to the file /etc/udev/rules.d/99-com.rules to be able to control PWM without root permission:
+   SUBSYSTEM=="pwm*", PROGRAM="/bin/sh -c '\
+           chown -R root:gpio /sys/class/pwm && chmod -R 770 /sys/class/pwm;\
+           chown -R root:gpio /sys/devices/platform/soc/*.pwm/pwm/pwmchip* && chmod -R 770 /sys/devices/platform/soc/*.pwm/pwm/pwmchip*\
+   '"
+
 
 Methods
 -------
