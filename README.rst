@@ -25,15 +25,6 @@ using sysfs: this allows the GPIO pins to be accessed from user space.
 See the `documentation <https://opi-gpio.readthedocs.io>`_ for install
 instructions and detailed API usage.
 
-Permissions for PWM
--------------------
-Add this to the file /etc/udev/rules.d/99-com.rules to be able to control PWM without root permission
-	SUBSYSTEM=="pwm*", PROGRAM="/bin/sh -c '\
-			  chown -R root:gpio /sys/class/pwm && chmod -R 770 /sys/class/pwm;\
-			  chown -R root:gpio /sys/devices/platform/soc/*.pwm/pwm/pwmchip* && chmod -R 770 /sys/devices/platform/soc/*.pwm/pwm/pwmchip*\
-	'"
-
-
 References
 ----------
 * https://www.kernel.org/doc/Documentation/gpio/sysfs.txt
