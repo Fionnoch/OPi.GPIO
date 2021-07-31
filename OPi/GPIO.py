@@ -731,6 +731,7 @@ class PWM:
         self.frequency = frequency
         self.duty_cycle_percent = duty_cycle_percent
         self.invert_polarity = invert_polarity
+        self.active = False
 
         try:
             sysfs.PWM_Export(chip, pin)  # creates the pwm sysfs object
@@ -753,13 +754,17 @@ class PWM:
         """
         Start PWM Signal.
         """
-        return sysfs.PWM_Duty_Cycle_Percent(self.chip, self.pin, self.duty_cycle_percent)  # duty cycle controls the on-off
+        self.active = True
+        return sysfs.PWM_Enable(self.chip, self.pin)
+        #return sysfs.PWM_Duty_Cycle_Percent(self.chip, self.pin, self.duty_cycle_percent)  # duty cycle controls the on-off
 
     def stop_pwm(self):  # turn on pwm by setting the duty cycle to 0
         """
         Stop PWM Signal.
         """
-        return sysfs.PWM_Duty_Cycle_Percent(self.chip, self.pin, 0)  # duty cycle at 0 is the equivilant of off
+        self.active = False
+        return sysfs.PWM_Disable(self.chip, self.pin)
+        #return sysfs.PWM_Duty_Cycle_Percent(self.chip, self.pin, 0)  # duty cycle at 0 is the equivilant of off
 
     def change_frequency(self, new_frequency):
         # Order of opperations:
@@ -810,9 +815,18 @@ class PWM:
         """
         Invert the signal.
         """
-        sysfs.PWM_Disable(self.chip, self.pin)
-        sysfs.PWM_Polarity(self.chip, self.pin, invert=not(self.invert_polarity))
-        sysfs.PWM_Enable(self.chip, self.pin)
+        if self.active :
+            sysfs.PWM_Disable(self.chip, self.pin)
+            sysfs.PWM_Polarity(self.chip, self.pin, invert=not(self.invert_polarity))
+            sysfs.PWM_Enable(self.chip, self.pin)
+        else:
+            #sysfs.PWM_Disable(self.chip, self.pin)
+            sysfs.PWM_Polarity(self.chip, self.pin, invert=not(self.invert_polarity))
+            #sysfs.PWM_Enable(self.chip, self.pin)
+
+        #sysfs.PWM_Disable(self.chip, self.pin)
+        #sysfs.PWM_Polarity(self.chip, self.pin, invert=not(self.invert_polarity))
+        #sysfs.PWM_Enable(self.chip, self.pin)
 
     def pwm_close(self):
         """
